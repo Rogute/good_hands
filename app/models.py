@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth import get_user_model
+from django.contrib.auth.models import User
 
 TYPE = (
     (1, "Fundacja"),
@@ -36,4 +36,4 @@ class Donation(models.Model):
     pick_up_date = models.DateField(auto_now=False, auto_now_add=False, null=True)
     pick_up_time = models.TimeField(auto_now=False, auto_now_add=False, null=True)
     pick_up_comment = models.TextField()
-    user = models.ForeignKey(get_user_model(), on_delete=models.DO_NOTHING, null=True)
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING, null=True)
