@@ -7,7 +7,7 @@ from .forms import RegisterForm, LoginForm
 from django.contrib.auth import authenticate, login, logout
 
 
-class LandingPage(View):
+class LandingPageView(View):
     def get(self, request):
         # quantity from Donation
         sum_of_bags = Donation.objects.aggregate(Sum('quantity'))
@@ -17,12 +17,12 @@ class LandingPage(View):
         return render(request, "index.html", ctx)
 
 
-class AddDonation(View):
+class AddDonationView(View):
     def get(self, request):
         return render(request, "form.html")
 
 
-class Login(View):
+class LoginView(View):
     def get(self, request):
         form = LoginForm()
         return render(request, "login.html", {"form": form})
@@ -39,7 +39,14 @@ class Login(View):
         return render(request, "login.html", {"form": form})
 
 
-class Register(View):
+class LogoutView(View):
+    def get(self, request):
+        if request.user.is_authenticated:
+            logout(request)
+        return redirect("index")
+
+
+class RegisterView(View):
     def get(self, request):
         form = RegisterForm()
         return render(request, "register.html", {"form": form})
@@ -47,7 +54,6 @@ class Register(View):
     def post(self, request):
         form = RegisterForm(request.POST)
         if form.is_valid():
-            # form.cleaned_data.pop
             password = form.cleaned_data["password1"]
             user = User.objects.create(
                 first_name=form.cleaned_data["first_name"],
