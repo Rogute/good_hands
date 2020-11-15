@@ -3,7 +3,8 @@ from django.views import View
 from .models import Donation
 from django.contrib.auth.models import User
 from django.db.models import Sum
-from .forms import RegisterForm
+from .forms import RegisterForm, LoginForm
+from django.contrib.auth import authenticate, login, logout
 
 
 class LandingPage(View):
@@ -23,24 +24,39 @@ class AddDonation(View):
 
 class Login(View):
     def get(self, request):
-        return render(request, "login.html")
+        form = LoginForm()
+        return render(request, "login.html", {"form": form})
+
+    def post(self, request):
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect("index")
+        return render(request, "login.html", {"form": form})
 
 
 class Register(View):
     def get(self, request):
-        form = RegisterForm(auto_id=False)
+        form = RegisterForm()
         return render(request, "register.html", {"form": form})
 
     def post(self, request):
         form = RegisterForm(request.POST)
         if form.is_valid():
             # form.cleaned_data.pop
+            password = form.cleaned_data["password1"]
             user = User.objects.create(
                 first_name=form.cleaned_data["first_name"],
                 last_name=form.cleaned_data["last_name"],
                 email=form.cleaned_data["email"],
-                password=form.cleaned_data["password1"],
                 username=form.cleaned_data["email"]
             )
+            user.set_password(password)
+            user.save()
+
             return redirect("login")
         return render(request, "register.html", {"form": form})

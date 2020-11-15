@@ -13,6 +13,7 @@
     <section class="login-page">
       <h2>Załóż konto</h2>
       <form action="{% url 'register' %}" method="POST">
+          {% csrf_token %}
         <div class="form-group">
                 {{ form.first_name }}
             </div>
