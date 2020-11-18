@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.views import View
-from .models import Donation
+from .models import Donation, Category, Institution
 from django.contrib.auth.models import User
 from django.db.models import Sum
 from .forms import RegisterForm, LoginForm
@@ -10,16 +10,24 @@ from django.contrib.auth import authenticate, login, logout
 class LandingPageView(View):
     def get(self, request):
         # quantity from Donation
-        sum_of_bags = Donation.objects.aggregate(Sum('quantity'))
+        sum_of_bags = Donation.objects.aggregate(value=Sum('quantity'))
+        institution_supported = Donation.objects.aggregate(value=Sum('institution'))
         ctx = {
-            "sum_of_bags": sum_of_bags
+            "sum_of_bags": sum_of_bags,
+            "institution_supported": institution_supported
         }
         return render(request, "index.html", ctx)
 
 
 class AddDonationView(View):
     def get(self, request):
-        return render(request, "form.html")
+        categories = Category.objects.all()
+        institutions = Institution.objects.all()
+        ctx = {
+            'categories': categories,
+            'institutions': institutions,
+        }
+        return render(request, 'form.html', ctx)
 
 
 class LoginView(View):
@@ -66,3 +74,15 @@ class RegisterView(View):
 
             return redirect("login")
         return render(request, "register.html", {"form": form})
+
+
+class ProfileView(View):
+    def get(self, request):
+        if request.user.is_authenticated:
+            user = request.user
+            donations = Donation.objects.filter(user_id=user.id)
+            ctx = {
+                'user': user,
+                'donations': donations
+            }
+            return render(request, 'user_profile.html', ctx)

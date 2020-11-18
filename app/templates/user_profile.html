@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}{% endblock %}
+
+{% block content%}
+<header>
+    <nav class="container container--70">
+        {% include 'menu_bar.html' %}
+    </nav>
+</header>
+    <div>
+        <h2>Imię: {{ user.first_name }}<br/>
+            Nazwisko: {{ user.last_name }}<br/>
+            Email: {{ user.email }}</h2>
+    </div>
+    <div>
+    {% for donation in donations %}
+        <h2>Worków: {{ donation.quantity }}<br/>
+        Dla: {{ donation.institution }}<br/>
+        {% for category in donation.categories.all %}
+            {{ category.name }}
+        {% endfor %}<br/>
+        Odebrano: {{ donation.pick_up_date }}
+        </h2>
+    {% endfor %}
+    </div>
+{% endblock %}
