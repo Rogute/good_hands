@@ -3,7 +3,7 @@ from django.views import View
 from .models import Donation, Category, Institution
 from django.contrib.auth.models import User
 from django.db.models import Sum
-from .forms import RegisterForm, LoginForm
+from .forms import RegisterForm, LoginForm, EditProfileForm
 from django.contrib.auth import authenticate, login, logout
 
 
@@ -12,9 +12,15 @@ class LandingPageView(View):
         # quantity from Donation
         sum_of_bags = Donation.objects.aggregate(value=Sum('quantity'))
         institution_supported = Donation.objects.aggregate(value=Sum('institution'))
+        foundations = Institution.objects.filter(type=1)
+        non_governmental_organizations = Institution.objects.filter(type=2)
+        local_collection = Institution.objects.filter(type=3)
         ctx = {
             "sum_of_bags": sum_of_bags,
-            "institution_supported": institution_supported
+            "institution_supported": institution_supported,
+            "foundations": foundations,
+            "non_governmental_organizations": non_governmental_organizations,
+            "local_collection": local_collection
         }
         return render(request, "index.html", ctx)
 
@@ -80,9 +86,25 @@ class ProfileView(View):
     def get(self, request):
         if request.user.is_authenticated:
             user = request.user
-            donations = Donation.objects.filter(user_id=user.id)
+            donations = Donation.objects.filter(is_taken=False, user_id=user.id)
+            donations_taken = Donation.objects.filter(is_taken=True, user_id=user.id)
             ctx = {
                 'user': user,
-                'donations': donations
+                'donations': donations,
+                'donations_taken': donations_taken
             }
             return render(request, 'user_profile.html', ctx)
+
+
+class EditProfileView(View):
+    def get(self, request):
+        form = EditProfileForm()
+        return render(request, 'user_update.html', {"form": form})
+
+    def post(self, request):
+        user = request.user
+        form = EditProfileForm(request.POST, isinstance=user)
+        if form.is_valid():
+            form.save()
+            return redirect('profil')
+

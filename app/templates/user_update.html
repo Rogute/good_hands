@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}{% endblock %}
+
+{% block content%}
+<header>
+    <nav class="container container--70">
+        {% include 'menu_bar.html' %}
+    </nav>
+</header>
+    <br/>
+    <br/>
+    <div>
+<form method="post">
+    {% csrf_token %}
+    <table>
+    {{ form }}
+        </table>
+    <input type="submit" value="Update">
+</form>
+</div>
+    <br/>
+    <br/>
+{% endblock %}

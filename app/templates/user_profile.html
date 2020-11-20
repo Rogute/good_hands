@@ -13,8 +13,30 @@
             Nazwisko: {{ user.last_name }}<br/>
             Email: {{ user.email }}</h2>
     </div>
+
     <div>
     {% for donation in donations %}
+        <h2>Worków: {{ donation.quantity }}<br/>
+        Dla: {{ donation.institution }}<br/>
+        {% for category in donation.categories.all %}
+            {{ category.name }}
+        {% endfor %}<br/>
+        Odebrano: {{ donation.pick_up_date }}
+
+        <div class="form-group form-group--buttons">
+            <form action="#" method="POST">
+                {% csrf_token %}
+                <button class="btn" type="submit">Zabrano</button>
+            </form>
+        </div>
+        {% empty %}
+            Brak darów do zabrania.
+
+        </h2>
+    {% endfor %}
+    </div>
+    <div style="color: dimgrey">
+    {% for donation in donations_taken %}
         <h2>Worków: {{ donation.quantity }}<br/>
         Dla: {{ donation.institution }}<br/>
         {% for category in donation.categories.all %}
@@ -24,4 +46,5 @@
         </h2>
     {% endfor %}
     </div>
+
 {% endblock %}

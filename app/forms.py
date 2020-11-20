@@ -1,4 +1,6 @@
 from django import forms
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserChangeForm
 
 
 class RegisterForm(forms.Form):
@@ -17,3 +19,9 @@ class RegisterForm(forms.Form):
 class LoginForm(forms.Form):
     username = forms.CharField(widget=forms.TextInput(attrs={"placeholder": "Email"}), label=False)
     password = forms.CharField(widget=forms.PasswordInput(attrs={"placeholder": "Hasło"}), label=False)
+
+
+class EditProfileForm(forms.Form):
+    first_name = forms.CharField(widget=forms.TextInput)
+    last_name = forms.CharField(widget=forms.TextInput)
+    email = forms.EmailField(widget=forms.EmailInput)

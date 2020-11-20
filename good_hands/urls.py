@@ -22,6 +22,8 @@ from app.views import (
     RegisterView,
     LogoutView,
     ProfileView,
+    EditProfileView
+
 )
 
 urlpatterns = [
@@ -31,6 +33,6 @@ urlpatterns = [
     path('login/', LoginView.as_view(), name="login"),
     path('logout', LogoutView.as_view(), name="logout"),
     path('register/', RegisterView.as_view(), name="register"),
-    path('profil/', ProfileView.as_view(), name="profil")
-
+    path('profil/', ProfileView.as_view(), name="profil"),
+    path('profil/edit/', EditProfileView.as_view(), name="edit")
 ]
