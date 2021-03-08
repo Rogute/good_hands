@@ -66,6 +66,7 @@ document.addEventListener("DOMContentLoaded", function() {
       console.log(page);
     }
   }
+
   const helpSection = document.querySelector(".help");
   if (helpSection !== null) {
     new Help(helpSection);
@@ -136,6 +137,7 @@ document.addEventListener("DOMContentLoaded", function() {
       });
     }
   }
+
   document.querySelectorAll(".form-group--dropdown select").forEach(el => {
     new FormSelect(el);
   });
@@ -248,8 +250,63 @@ document.addEventListener("DOMContentLoaded", function() {
       this.updateForm();
     }
   }
+
   const form = document.querySelector(".form--steps");
   if (form !== null) {
     new FormSteps(form);
   }
+
+  var buttonOne = document.getElementById("button-step-one");
+    buttonOne.addEventListener("click", function () {
+        var categories = document.querySelectorAll('.categories');
+        var checkedCategories = [];
+        for (var i = 0; i < categories.length; i++) {
+            if (categories[i].checked) {
+                checkedCategories.push(categories[i].dataset.id);
+            }
+        }
+        console.log('Wybrana kategoria:' + checkedCategories)
+
+        var institutions = document.querySelectorAll('.institutions')
+        console.log('Ilość instytucji :' + institutions.length);
+        for (var i = 0; i < institutions.length; i++) {
+            var institutionCategories = institutions[i].dataset.categories.split("");
+            console.log(institutions[i].dataset.name + ' kategorie : ' + institutionCategories)
+            var result = 0;
+            for (var x = 0; x < institutionCategories.length; x++) {
+                if (checkedCategories.includes(institutionCategories[x])) {
+                    result += 1;
+                }
+            }
+            if (result == checkedCategories.length) {
+                institutions[i].parentElement.parentElement.style.display = 'block';
+            } else {
+                institutions[i].parentElement.parentElement.style.display = 'none';
+            }
+
+        }
+    });
+
+
+    var buttonLast = document.getElementById('last-button')
+    buttonLast.addEventListener('click', function(){
+        var bags = document.getElementById('bags').value
+        document.getElementById('bags-result').innerHTML = bags
+        var institution = document.getElementById('institution').dataset.name
+        document.getElementById('institution-result').innerHTML = institution
+        var address = document.getElementById('address').value
+        document.getElementById('address-result').innerHTML = address
+        var city = document.getElementById('city').value
+        document.getElementById('city-result').innerHTML = city
+        var postcode = document.getElementById('postcode').value
+        document.getElementById('postcode-result').innerHTML = postcode
+        var phone = document.getElementById('phone').value
+        document.getElementById('phone-result').innerHTML = phone
+        var date = document.getElementById('date').value
+        document.getElementById('date-result').innerHTML = date
+        var time = document.getElementById('time').value
+        document.getElementById('time-result').innerHTML = time
+        var comment = document.getElementById('comment').value
+        document.getElementById('comment-result').innerHTML = comment
+    })
 });

@@ -59,7 +59,8 @@
       <div class="form--steps-container">
         <div class="form--steps-counter">Krok <span>1</span>/5</div>
 
-        <form action="form-confirmation.html" method="post">
+        <form action="{% url 'add_donation' %}" method="POST">
+        {% csrf_token %}
           <!-- STEP 1: class .active is switching steps -->
           <div data-step="1" class="active">
             <h3>Zaznacz co chcesz oddać:</h3>
@@ -67,7 +68,8 @@
             {% for category in categories %}
                 <div class="form-group form-group--checkbox">
                     <label>
-                        <input type="checkbox" name="categories" value="{{ category.id }}"/>
+                        <input type="checkbox" name="categories" value="{{ category.id }}" class="categories"
+                                id='categories' data-id="{{ category.id }}"/>
                         <span class="checkbox"></span>
                         <span class="description">{{ category.name }}</span>
                     </label>
@@ -75,7 +77,7 @@
             {% endfor %}
 
             <div class="form-group form-group--buttons">
-              <button type="button" class="btn next-step">Dalej</button>
+              <button type="button" id="button-step-one" class="btn next-step">Dalej</button>
             </div>
           </div>
 
@@ -86,7 +88,7 @@
             <div class="form-group form-group--inline">
               <label>
                 Liczba 60l worków:
-                <input type="number" name="bags" step="1" min="1" />
+                <input type="number" name="bags" step="1" min="1" id="bags"/>
               </label>
             </div>
 
@@ -104,7 +106,9 @@
             {% for institution in institutions %}
                 <div class="form-group form-group--checkbox">
                     <label>
-                        <input type="radio" name="organization" value="old"/>
+                        <input type="radio" name="institutions" id="institution" class="institutions" value="{{ institution.id }}"
+                                data-name="{{ institution.name }}" data-categories="
+                                {% for category in institution.categories.all %}{{ category.id }}{% endfor %}"/>
                         <span class="checkbox radio"></span>
                         <span class="description">
                             <div class="title">{{ institution.name }}</div>
@@ -128,22 +132,22 @@
               <div class="form-section--column">
                 <h4>Adres odbioru</h4>
                 <div class="form-group form-group--inline">
-                  <label> Ulica <input type="text" name="address" /> </label>
+                  <label> Ulica <input type="text" name="address" id="address"/> </label>
                 </div>
 
                 <div class="form-group form-group--inline">
-                  <label> Miasto <input type="text" name="city" /> </label>
+                  <label> Miasto <input type="text" name="city" id="city"/> </label>
                 </div>
 
                 <div class="form-group form-group--inline">
                   <label>
-                    Kod pocztowy <input type="text" name="postcode" />
+                    Kod pocztowy <input type="text" name="postcode" id="postcode"/>
                   </label>
                 </div>
 
                 <div class="form-group form-group--inline">
                   <label>
-                    Numer telefonu <input type="phone" name="phone" />
+                    Numer telefonu <input type="phone" name="phone" id="phone"/>
                   </label>
                 </div>
               </div>
@@ -151,24 +155,24 @@
               <div class="form-section--column">
                 <h4>Termin odbioru</h4>
                 <div class="form-group form-group--inline">
-                  <label> Data <input type="date" name="data" /> </label>
+                  <label> Data <input type="date" name="date" id="date"/> </label>
                 </div>
 
                 <div class="form-group form-group--inline">
-                  <label> Godzina <input type="time" name="time" /> </label>
+                  <label> Godzina <input type="time" name="time" id="time"/> </label>
                 </div>
 
                 <div class="form-group form-group--inline">
                   <label>
                     Uwagi dla kuriera
-                    <textarea name="more_info" rows="5"></textarea>
+                    <textarea name="more_info" rows="5" id="comment"></textarea>
                   </label>
                 </div>
               </div>
             </div>
             <div class="form-group form-group--buttons">
               <button type="button" class="btn prev-step">Wstecz</button>
-              <button type="button" class="btn next-step">Dalej</button>
+              <button type="button" class="btn next-step" id="last-button">Dalej</button>
             </div>
           </div>
 
@@ -182,16 +186,12 @@
                 <ul>
                   <li>
                     <span class="icon icon-bag"></span>
-                    <span class="summary--text"
-                      >4 worki ubrań w dobrym stanie dla dzieci</span
-                    >
+                    <span class="summary--text"><span id="bags-result"></span> worki</span>
                   </li>
 
                   <li>
                     <span class="icon icon-hand"></span>
-                    <span class="summary--text"
-                      >Dla fundacji "Mam marzenie" w Warszawie</span
-                    >
+                    <span class="summary--text">Dla: <span id="institution-result"></span></span>
                   </li>
                 </ul>
               </div>
@@ -200,19 +200,19 @@
                 <div class="form-section--column">
                   <h4>Adres odbioru:</h4>
                   <ul>
-                    <li>Prosta 51</li>
-                    <li>Warszawa</li>
-                    <li>99-098</li>
-                    <li>123 456 789</li>
+                    <li id="address-result"></li>
+                    <li id="city-result"></li>
+                    <li id="postcode-result"></li>
+                    <li id="phone-result"></li>
                   </ul>
                 </div>
 
                 <div class="form-section--column">
                   <h4>Termin odbioru:</h4>
                   <ul>
-                    <li>13/12/2018</li>
-                    <li>15:40</li>
-                    <li>Brak uwag</li>
+                    <li id="date-result"></li>
+                    <li id="time-result"></li>
+                    <li id="comment-result"></li>
                   </ul>
                 </div>
               </div>
