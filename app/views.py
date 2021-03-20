@@ -124,6 +124,7 @@ class ProfileView(View):
             return render(request, 'user_profile.html', ctx)
 
 
+# in progress
 class EditProfileView(View):
     def get(self, request):
         form = EditProfileForm()
